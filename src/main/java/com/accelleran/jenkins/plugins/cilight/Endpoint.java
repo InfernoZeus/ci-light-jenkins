@@ -1,10 +1,13 @@
 package com.accelleran.jenkins.plugins.cilight;
 
+import hudson.Extension;
+import hudson.model.AbstractDescribableImpl;
+import hudson.model.Descriptor;
 import hudson.util.FormValidation;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
-public class Endpoint {
+public class Endpoint extends AbstractDescribableImpl<Endpoint> {
 
 
     private Protocol protocol = Protocol.UDP;
@@ -18,15 +21,12 @@ public class Endpoint {
 
     private int port = 50000;
 
-    private boolean cache = true;
-
     @DataBoundConstructor
-    public Endpoint(Protocol protocol, Format format, String url, int port, boolean cache) {
-        this.protocol = protocol;
-        this.format = format;
-        this.url = url;
-        this.port = port;
-        this.cache = cache;
+    public Endpoint(Protocol protocol, Format format, String url, int port) {
+        setProtocol(protocol);
+        setFormat(format);
+        setUrl(url);
+        setPort(port);
     }
 
     public Protocol getProtocol() {
@@ -34,7 +34,9 @@ public class Endpoint {
     }
 
     public void setProtocol(Protocol protocol) {
-        this.protocol = protocol;
+        if (protocol != null) {
+            this.protocol = protocol;
+        }
     }
 
     public String getUrl() {
@@ -42,18 +44,20 @@ public class Endpoint {
     }
 
     public void setUrl(String url) {
+        if (url == null || url.trim().isEmpty()) {
+            throw new IllegalArgumentException("URL can not be null or empty.");
+        }
         this.url = url;
     }
 
     public Format getFormat() {
-        if (this.format==null){
-            this.format = Format.JSON;
-        }
         return format;
     }
 
     public void setFormat(Format format) {
-        this.format = format;
+        if (format != null) {
+            this.format = format;
+        }
     }
 
     public int getPort() {
@@ -61,6 +65,9 @@ public class Endpoint {
     }
 
     public void setPort(int port) {
+        if (port < 1 || port > 65535) {
+            throw new IllegalArgumentException("Port must be between 1 and 65535.");
+        }
         this.port = port;
     }
 
@@ -73,17 +80,17 @@ public class Endpoint {
         }
     }
 
-    public boolean getCache() {
-        return cache;
-    }
-
-    public void setCache(boolean cache) {
-        this.cache = cache;
-    }
-
     @Override
     public String toString() {
         return protocol+":"+url;
+    }
+
+    @Extension
+    public static class DescriptorImpl extends Descriptor<Endpoint> {
+        @Override
+        public String getDisplayName() {
+            return "";
+        }
     }
 
 }

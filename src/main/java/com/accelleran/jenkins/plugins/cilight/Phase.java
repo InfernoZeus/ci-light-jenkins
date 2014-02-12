@@ -15,21 +15,24 @@ public enum Phase {
     STARTED, COMPLETED, FINISHED;
 
     public void handle(Run run, TaskListener listener) {
+        Job job = run.getParent();
         CiLightProperty property = (CiLightProperty) run.getParent().getProperty(CiLightProperty.class);
         if (property != null) {
-            List<Endpoint> targets = property.getEndpoints();
-            for (Endpoint target : targets) {
-                try {
-                    JobState jobState = buildJobState(run.getParent(), run, target);
-                    target.getProtocol().send(target.getUrl(), target.getPort(), target.getFormat().serialize(jobState));
-                } catch (IOException e) {
-                    e.printStackTrace(listener.error("Failed to notify "+target));
+            JobState jobState = buildJobState(job, run, property);
+            List<Endpoint> targets = CiLightGlobalConfiguration.get().getEndpoints();
+            if (targets != null) {
+                for (Endpoint target : targets) {
+                    try {
+                        target.getProtocol().send(target.getUrl(), target.getPort(), target.getFormat().serialize(jobState));
+                    } catch (IOException e) {
+                        e.printStackTrace(listener.error("Failed to notify "+target));
+                    }
                 }
             }
         }
     }
 
-    private JobState buildJobState(Job job, Run run, Endpoint endpoint) {
+    private JobState buildJobState(Job job, Run run, CiLightProperty property) {
         JobState jobState = new JobState();
 
         jobState.setName(job.getName());
@@ -41,7 +44,7 @@ public enum Phase {
             jobState.setServer("Unknown");
         }
         jobState.setUrl(job.getUrl());
-        jobState.setCache(endpoint.getCache());
+        jobState.setCache(property.getCache());
         BuildState buildState = new BuildState();
         buildState.setNumber(run.number);
         buildState.setUrl(run.getUrl());

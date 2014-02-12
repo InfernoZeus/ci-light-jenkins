@@ -1,0 +1,20 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+    <!-- Disabled because invisibleEntries currently cause invalid JSON to be generated. Defaults are already used in Endpoint.java -->
+    <!--<f:invisbleEntry title="Protocol" field="protocol" name="protocol">-->
+        <!--<f:textbox value="UDP"/>-->
+    <!--</f:invisbleEntry>-->
+    <!--<f:invisibleEntry title="Format" field="format">-->
+        <!--<f:textbox value="JSON" />-->
+    <!--</f:invisibleEntry>-->
+    <f:entry title="URL" description="IP or hostname of the CI Light server" field="url">
+        <f:textbox checkUrl="'descriptorByName/CiLightGlobalConfiguration/checkUrl?value='+escape(this.value)"/>
+    </f:entry>
+    <f:entry title="Port" field="port">
+        <f:textbox/>
+    </f:entry>
+    <f:entry>
+        <div align="right">
+            <f:repeatableDeleteButton />
+        </div>
+    </f:entry>
+</j:jelly>

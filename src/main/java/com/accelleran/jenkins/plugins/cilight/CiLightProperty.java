@@ -1,25 +1,45 @@
 package com.accelleran.jenkins.plugins.cilight;
 
+import hudson.Extension;
 import hudson.model.AbstractProject;
+import hudson.model.Job;
 import hudson.model.JobProperty;
+import hudson.model.JobPropertyDescriptor;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import java.util.List;
 
 public class CiLightProperty extends JobProperty<AbstractProject<?, ?>> {
 
-    final public List<Endpoint> endpoints;
+    private boolean cache = true;
 
     @DataBoundConstructor
-    public CiLightProperty(List<Endpoint> endpoints) {
-        this.endpoints = endpoints;
+    public CiLightProperty(boolean cache) {
+        setCache(cache);
     }
 
-    public List<Endpoint> getEndpoints() {
-        return endpoints;
+    public boolean getCache() {
+        return this.cache;
     }
 
-    public CiLightPropertyDescriptor getDescriptor() {
-        return (CiLightPropertyDescriptor) super.getDescriptor();
+    public void setCache(boolean cache) {
+        this.cache = cache;
     }
+
+    @Extension
+    public static class DescriptorImpl extends JobPropertyDescriptor
+    {
+        @Override
+        public String getDisplayName() {
+            return "ci-light";
+        }
+
+        @Override
+        public boolean isApplicable(Class<? extends Job> jobType) {
+            return true;
+        }
+
+
+    }
+
 }

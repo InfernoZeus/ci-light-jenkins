@@ -1,0 +1,62 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+
+    <l:pane width="3" title="CI Light Demo Mode">
+        <tr>
+            <td style="width: 16px;">
+                <img id="ci-light-demo-image" src="${resURL}/plugin/ci-light/images/disabled.png"/>
+            </td>
+            <td style="padding-top: 6px;">
+                <div id="ci-light-demo-status">
+                Disabled
+                </div>
+            </td>
+            <td style="text-align: right;">
+                <button id="ci-light-demo-button" onclick="toggleMode()">Enable Demo Mode</button>
+            </td>
+        </tr>
+
+    </l:pane>
+
+    <script>
+        var demoWidget = <st:bind value="${it}"/>
+
+        function setStatusText(text) {
+            document.getElementById('ci-light-demo-status').innerHTML = text;
+        }
+
+        function setButtonText(text) {
+            document.getElementById('ci-light-demo-button').innerHTML = text;
+        }
+
+        function setImageSource(mode) {
+            document.getElementById('ci-light-demo-image').src = "${resURL}/plugin/ci-light/images/"+mode+".png";
+        }
+
+        function setValues(active) {
+            if(active) {
+                setImageSource("enabled-check");
+                setStatusText("Enabled");
+                setButtonText("Disable Demo Mode");
+            } else {
+                setImageSource("disabled");
+                setStatusText("Disabled");
+                setButtonText("Enable Demo Mode");
+            }
+        }
+
+        function isActive() {
+            demoWidget.isActive(function(t) {
+                active = t.responseObject();
+                setValues(active);
+            })
+        }
+
+        function toggleMode() {
+            demoWidget.toggle(function(t) {
+                active = t.responseObject();
+                setValues(active);
+            })
+        }
+        isActive();
+    </script>
+</j:jelly>
