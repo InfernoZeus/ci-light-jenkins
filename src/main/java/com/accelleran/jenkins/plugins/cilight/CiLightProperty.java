@@ -13,6 +13,9 @@ public class CiLightProperty extends JobProperty<AbstractProject<?, ?>> {
 
     private boolean cache = true;
 
+    CiLightProperty() {
+    }
+
     @DataBoundConstructor
     public CiLightProperty(boolean cache) {
         setCache(cache);

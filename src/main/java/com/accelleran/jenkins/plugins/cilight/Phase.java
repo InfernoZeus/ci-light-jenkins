@@ -21,23 +21,31 @@ public enum Phase {
         Logger logger = Logger.getLogger(Phase.class.getName());
         logger.info("Run " + run.toString() + " entered phase " + this.toString());
         Job job = run.getParent();
-        CiLightProperty property = (CiLightProperty) run.getParent().getProperty(CiLightProperty.class);
-        if (property != null) {
-            JobState jobState = buildJobState(job, run, property);
-            List<Endpoint> targets = CiLightGlobalConfiguration.get().getEndpoints();
-            if (targets != null && !targets.isEmpty()) {
-                for (Endpoint target : targets) {
-                    try {
-                        target.getProtocol().send(target.getUrl(), target.getPort(), target.getFormat().serialize(jobState));
-                        logger.info("Sent " + run.toString() + " - " + this.toString() + " to endpoint " + target.toString());
-                    } catch (IOException e) {
-                        logger.log(Level.SEVERE, "Error sending " + run.toString() + " - " + this.toString() + " to endpoint " + target.toString(), e);
-                        e.printStackTrace(listener.error("Failed to notify " + target));
-                    }
-                }
-            } else {
-                logger.warning("No endpoints for CI Light notifications");
+        CiLightProperty property = (CiLightProperty) job.getProperty(CiLightProperty.class);
+        if (property == null) {
+            logger.warning("Couldn't get CiLightProperty for " + job.getName() + ". Adding default with no caching");
+            try {
+                property = new CiLightProperty();
+                job.addProperty(property);
+            } catch (IOException e) {
+                logger.log(Level.SEVERE, "Error adding default CiLightProperty to " + job.getName() + ".", e);
+                return;
             }
+        }
+        JobState jobState = buildJobState(job, run, property);
+        List<Endpoint> targets = CiLightGlobalConfiguration.get().getEndpoints();
+        if (targets != null && !targets.isEmpty()) {
+            for (Endpoint target : targets) {
+                try {
+                    target.getProtocol().send(target.getUrl(), target.getPort(), target.getFormat().serialize(jobState));
+                    logger.info("Sent " + run.toString() + " - " + this.toString() + " to endpoint " + target.toString());
+                } catch (IOException e) {
+                    logger.log(Level.SEVERE, "Error sending " + run.toString() + " - " + this.toString() + " to endpoint " + target.toString(), e);
+                    e.printStackTrace(listener.error("Failed to notify " + target));
+                }
+            }
+        } else {
+            logger.warning("No endpoints for CI Light notifications");
         }
     }
 
