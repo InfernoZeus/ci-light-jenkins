@@ -11,13 +11,15 @@ import java.util.List;
 
 public class CiLightProperty extends JobProperty<AbstractProject<?, ?>> {
 
+    private boolean notify = true;
     private boolean cache = true;
 
     CiLightProperty() {
     }
 
     @DataBoundConstructor
-    public CiLightProperty(boolean cache) {
+    public CiLightProperty(boolean notify, boolean cache) {
+        setNotify(notify);
         setCache(cache);
     }
 
@@ -27,6 +29,14 @@ public class CiLightProperty extends JobProperty<AbstractProject<?, ?>> {
 
     public void setCache(boolean cache) {
         this.cache = cache;
+    }
+
+    public boolean getNotify() {
+        return this.notify;
+    }
+
+    public void setNotify(boolean notify) {
+        this.notify = notify;
     }
 
     @Extension

@@ -32,20 +32,24 @@ public enum Phase {
                 return;
             }
         }
-        JobState jobState = buildJobState(job, run, property);
-        List<Endpoint> targets = CiLightGlobalConfiguration.get().getEndpoints();
-        if (targets != null && !targets.isEmpty()) {
-            for (Endpoint target : targets) {
-                try {
-                    target.getProtocol().send(target.getUrl(), target.getPort(), target.getFormat().serialize(jobState));
-                    logger.info("Sent " + run.toString() + " - " + this.toString() + " to endpoint " + target.toString());
-                } catch (IOException e) {
-                    logger.log(Level.SEVERE, "Error sending " + run.toString() + " - " + this.toString() + " to endpoint " + target.toString(), e);
-                    e.printStackTrace(listener.error("Failed to notify " + target));
+        if (property.getNotify()) {
+            JobState jobState = buildJobState(job, run, property);
+            List<Endpoint> targets = CiLightGlobalConfiguration.get().getEndpoints();
+            if (targets != null && !targets.isEmpty()) {
+                for (Endpoint target : targets) {
+                    try {
+                        target.getProtocol().send(target.getUrl(), target.getPort(), target.getFormat().serialize(jobState));
+                        logger.info("Sent " + run.toString() + " - " + this.toString() + " to endpoint " + target.toString());
+                    } catch (IOException e) {
+                        logger.log(Level.SEVERE, "Error sending " + run.toString() + " - " + this.toString() + " to endpoint " + target.toString(), e);
+                        e.printStackTrace(listener.error("Failed to notify " + target));
+                    }
                 }
+            } else {
+                logger.warning("No endpoints for CI Light notifications");
             }
         } else {
-            logger.warning("No endpoints for CI Light notifications");
+            logger.log(Level.INFO, "Job " + job.getName() + " has notifications disabled.");
         }
     }
 
