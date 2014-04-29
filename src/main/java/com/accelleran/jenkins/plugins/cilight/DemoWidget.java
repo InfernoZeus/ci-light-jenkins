@@ -40,6 +40,26 @@ public class DemoWidget extends Widget {
         return active;
     }
 
+    @JavaScriptMethod
+    public void clearCache() {
+        CiLightGlobalConfiguration config = CiLightGlobalConfiguration.get();
+        List<Endpoint> endpoints = config.getEndpoints();
+        for (Endpoint endpoint : endpoints) {
+            try {
+                sendClearCache(endpoint);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void sendClearCache(Endpoint endpoint) throws IOException {
+        String data = "{\"command\": \"clear\"}";
+        DatagramSocket socket = new DatagramSocket();
+        DatagramPacket packet = new DatagramPacket(data.getBytes(), data.length(), InetAddress.getByName(endpoint.getUrl()), endpoint.getPort());
+        socket.send(packet);
+    }
+
     private void setDemoMode(Endpoint endpoint, boolean newMode) throws IOException {
         String data = "{\"command\": \"demo\", \"mode\": " + newMode + "}";
         DatagramSocket socket = new DatagramSocket();

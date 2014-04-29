@@ -14,6 +14,15 @@
                 <button id="ci-light-demo-button" onclick="toggleMode()">Enable Demo Mode</button>
             </td>
         </tr>
+        <tr>
+            <td style="width: 16px;">
+            </td>
+            <td style="padding-top: 6px;">
+            </td>
+            <td style="text-align: right;">
+                <button id="ci-light-cache-button" onclick="clearCache()">Clear Cache</button>
+            </td>
+        </tr>
 
     </l:pane>
 
@@ -56,6 +65,10 @@
                 active = t.responseObject();
                 setValues(active);
             })
+        }
+
+        function clearCache() {
+            demoWidget.clearCache();
         }
         isActive();
     </script>
