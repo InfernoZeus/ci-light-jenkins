@@ -11,8 +11,8 @@ import java.util.List;
 
 public class CiLightProperty extends JobProperty<AbstractProject<?, ?>> {
 
-    private boolean notify = true;
-    private boolean cache = true;
+    private boolean notify = false;
+    private boolean cache = false;
 
     CiLightProperty() {
     }

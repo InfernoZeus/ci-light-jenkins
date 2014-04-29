@@ -2,10 +2,10 @@
 
     <f:section title="CI Light">
         <f:entry title="Notify Light?" field="notify">
-            <f:checkbox name="notify" checked="${instance.notify}" default="true" />
+            <f:checkbox name="notify" checked="${instance.notify}" default="false" />
         </f:entry>
         <f:entry title="Cache Result?" field="cache">
-            <f:checkbox name="cache" checked="${instance.cache}" default="true" />
+            <f:checkbox name="cache" checked="${instance.cache}" default="false" />
         </f:entry>
     </f:section>
 
