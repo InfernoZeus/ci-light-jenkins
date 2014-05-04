@@ -1,18 +1,17 @@
 package com.accelleran.jenkins.plugins.cilight;
 
 import hudson.Extension;
-import hudson.model.AbstractProject;
-import hudson.model.Job;
-import hudson.model.JobProperty;
-import hudson.model.JobPropertyDescriptor;
+import hudson.model.*;
+import net.sf.json.JSONObject;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.StaplerRequest;
 
 import java.util.List;
 
 public class CiLightProperty extends JobProperty<AbstractProject<?, ?>> {
 
     private boolean notify = false;
-    private boolean cache = false;
+    private boolean cache = true;
 
     CiLightProperty() {
     }
@@ -52,7 +51,15 @@ public class CiLightProperty extends JobProperty<AbstractProject<?, ?>> {
             return true;
         }
 
-
+        @Override
+        public JobProperty<?> newInstance(StaplerRequest req, JSONObject formData) throws FormException {
+            if (formData.isEmpty()) {
+                return new CiLightProperty();
+            } else {
+                JSONObject notifyObject = formData.getJSONObject("notify");
+                return new CiLightProperty(true, notifyObject.getBoolean("cache"));
+            }
+        }
     }
 
 }

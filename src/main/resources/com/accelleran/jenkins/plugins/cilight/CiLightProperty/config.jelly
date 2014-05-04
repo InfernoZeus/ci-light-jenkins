@@ -1,12 +1,9 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
 
-    <f:section title="CI Light">
-        <f:entry title="Notify Light?" field="notify">
-            <f:checkbox name="notify" checked="${instance.notify}" default="false" />
-        </f:entry>
-        <f:entry title="Cache Result?" field="cache">
-            <f:checkbox name="cache" checked="${instance.cache}" default="false" />
-        </f:entry>
-    </f:section>
+        <f:optionalBlock name="notify" title="Notify CI Light" checked="${instance.notify}" default="false">
+            <f:entry title="Cache Result" field="cache">
+                <f:checkbox name="cache" checked="${instance.cache}" default="true" />
+            </f:entry>
+        </f:optionalBlock>
 
 </j:jelly>
